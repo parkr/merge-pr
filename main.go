@@ -57,4 +57,5 @@ func main() {
 	gitPull()
 	openEditor()
 	commitChangesToHistoryFile(number)
+	gitPush()
 }
