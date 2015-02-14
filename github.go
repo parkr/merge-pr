@@ -10,14 +10,22 @@ import (
 )
 
 var (
-	mergePullRequestUrl = octokit.Hyperlink("repos/{owner}/{repo}/pulls{/number}/merge")
+	client *octokit.Client
 
-	NotMergableError = errors.New("Not mergable")
-	NotFoundError    = errors.New("Not found")
+	mergePullRequestUrl = octokit.Hyperlink("repos/{owner}/{repo}/pulls{/number}/merge")
+	deleteBranchUrl     = octokit.Hyperlink("repos/{owner}/{repo}/git/refs/heads/{branch}")
+
+	NotMergableError        = errors.New("Not mergable")
+	NotFoundError           = errors.New("Not found")
+	BranchNotFoundError     = errors.New("Branch not found")
+	NonDeletableBranchError = errors.New("Branch cannot be deleted")
 )
 
-func newRequest(owner, repo, number string) (*octokit.Request, error) {
-	client := octokit.NewClient(octokit.NetrcAuth{})
+func init() {
+	client = octokit.NewClient(octokit.NetrcAuth{})
+}
+
+func newMergeRequest(owner, repo, number string) (*octokit.Request, error) {
 	url, _ := mergePullRequestUrl.Expand(octokit.M{
 		"owner":  owner,
 		"repo":   repo,
@@ -27,12 +35,29 @@ func newRequest(owner, repo, number string) (*octokit.Request, error) {
 	return client.NewRequest(url.String())
 }
 
+func getPullRequest(owner, repo, number string) (*octokit.PullRequest, error) {
+	url, _ := octokit.PullRequestsURL.Expand(octokit.M{
+		"owner":  owner,
+		"repo":   repo,
+		"number": number,
+	})
+	req, err := client.NewRequest(url.String())
+	if err != nil {
+		return nil, err
+	}
+
+	var pullRequest octokit.PullRequest
+	_, prGetErr := req.Get(&pullRequest)
+
+	return &pullRequest, prGetErr
+}
+
 func mergePullRequest(owner, repo, number string) error {
 	if verbose {
 		log.Printf("Attempting to merge PR #%s on %s/%s...\n", number, owner, repo)
 	}
 
-	req, err := newRequest(owner, repo, number)
+	req, err := newMergeRequest(owner, repo, number)
 	if err != nil {
 		return err
 	}
@@ -57,4 +82,36 @@ func mergePullRequest(owner, repo, number string) error {
 	}
 
 	return nil
+}
+
+func deleteBranch(owner, repo, branch string) error {
+	switch branch {
+	case "master":
+		fallthrough
+	case "gh-pages":
+		fallthrough
+	case "dev":
+		fallthrough
+	case "staging":
+		return NonDeletableBranchError
+	}
+
+	url, _ := deleteBranchUrl.Expand(octokit.M{
+		"owner":  owner,
+		"repo":   repo,
+		"branch": branch,
+	})
+	req, err := client.NewRequest(url.String())
+	if err != nil {
+		return err
+	}
+
+	var deleted map[string]interface{}
+	_, deleteBranchErr := req.Delete(&deleted)
+
+	if strings.Contains(deleteBranchErr.Error(), "422 - Reference does not exist") {
+		return BranchNotFoundError
+	}
+
+	return deleteBranchErr
 }
