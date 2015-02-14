@@ -2,7 +2,6 @@ package main
 
 import (
 	"log"
-	"os"
 	"os/exec"
 	"regexp"
 	"strings"
@@ -52,23 +51,19 @@ func gitOriginRemote(remotes []string) string {
 }
 
 func gitPull() {
-	exec.Command("git", "pull", "--rebase").Run()
+	shellExec("git", "pull", "--rebase")
 }
 
 func gitPush() {
-	exec.Command("git", "push").Run()
+	shellExec("git", "push")
 }
 
 func commitChangesToHistoryFile(pr string) {
-	exec.Command("git", "add", "History.markdown").Run()
-	cmd := exec.Command(
+	shellExec("git", "add", "History.markdown")
+	shellExec(
 		"git",
 		"commit",
 		"-m",
 		"Update history to reflect merge of #"+pr+" [ci skip]",
 	)
-	cmd.Stdin = os.Stdin
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	cmd.Run()
 }

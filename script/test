@@ -22,7 +22,7 @@ test -f "$HOME/.netrc" || {
 }
 echo "==> Running tests in '$(pwd)/${dir}'"
 pushd $dir > /dev/null
-test -z $(go fmt) || (echo -e "FAIL\tgo fmt failed." && exit 1)
+test -z "$(go fmt)" || (echo -e "FAIL\tgo fmt failed." && exit 1)
 go test -coverprofile=coverage.out
 # go vet || (echo -e "FAIL\tgo vet failed." && exit 1)
 popd > /dev/null
