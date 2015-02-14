@@ -41,7 +41,20 @@ func main() {
 		}
 	}
 
-    gitPull()
+	pr, err := getPullRequest(owner, repo, number)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	if pr.Head.User.Login == owner && pr.Head.Ref != "" {
+		err := deleteBranch(owner, repo, pr.Head.Ref)
+		if err != nil {
+			fmt.Println(err)
+		}
+	}
+
+	gitPull()
 	openEditor()
 	commitChangesToHistoryFile(number)
 }

@@ -52,7 +52,7 @@ func gitOriginRemote(remotes []string) string {
 }
 
 func gitPull() {
-    exec.Command("git", "pull", "--rebase").Run()
+	exec.Command("git", "pull", "--rebase").Run()
 }
 
 func commitChangesToHistoryFile(pr string) {
