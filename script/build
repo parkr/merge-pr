@@ -1,0 +1,7 @@
+#!/bin/bash
+set -e
+cd $(dirname $0)/..
+RELEASE=$(git rev-parse HEAD)
+GOPATH=$(pwd) go build \
+  -ldflags "-X main.release $RELEASE" \
+  -o merge-pr
