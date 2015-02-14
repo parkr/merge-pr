@@ -39,6 +39,15 @@ This will go to GitHub, merge the PR, delete the branch if it's on the same
 repo, will pull down those changes, open up your editor (`$EDITOR`), then
 commit that change.
 
+## Contributing
+
+To get setup, clone the repo and run `script/bootstrap`. Make your edits.
+Add tests where you can. Run tests with `script/test`, use `script/cibuild`
+to run the tests and build the binary if the tests are successful.
+
+Once you're happy with your change, submit a PR. If I like it, I'll use
+this tool to merge it!
+
 ## Credits / License
 
 MIT License, copyright Parker Moore. Details in the `LICENSE` file.
