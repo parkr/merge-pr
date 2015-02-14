@@ -17,7 +17,9 @@ else
     dir="$1"
 fi
 
-test -f "$HOME/.netrc" || echo -e "machine api.github.com\n  login travis\n  password terrible"
+test -f "$HOME/.netrc" || {
+  echo -e "machine api.github.com\n  login travis\n  password terrible" > $HOME/.netrc
+}
 echo "==> Running tests in '$(pwd)/${dir}'"
 pushd $dir > /dev/null
 test -z $(go fmt) || (echo -e "FAIL\tgo fmt failed." && exit 1)
