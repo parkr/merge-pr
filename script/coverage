@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 script/test
 COV="coverage.out"
 LOCAL_PACKAGE=$(go list)
