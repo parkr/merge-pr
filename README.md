@@ -32,8 +32,13 @@ machine api.github.com
 ## Usage
 
 ```bash
+$ cd my-project
 $ merge-pr 7
 ```
+
+It uses the origin remote to discern which repo to make the API requests
+against, so ensure your `origin` is pointed to the repository that you
+want to merge the pull request into.
 
 This will go to GitHub, merge the PR, delete the branch if it's on the same
 repo, will pull down those changes, open up your editor (`$EDITOR`), then
