@@ -74,9 +74,6 @@ func TestFetchRepoOwnerAndName(t *testing.T) {
 
 func TestGitRemotes(t *testing.T) {
 	remotes := gitRemotes()
-	expected := []string{
-		"origin\tgit@github.com:parkr/merge-pr.git (fetch)",
-		"origin\tgit@github.com:parkr/merge-pr.git (push)",
-	}
-	assert.Equal(t, expected, remotes)
+	assert.Contains(t, remotes[0], "parkr/merge-pr.git (fetch)")
+	assert.Contains(t, remotes[1], "parkr/merge-pr.git (push)")
 }
