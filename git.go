@@ -51,6 +51,10 @@ func gitOriginRemote(remotes []string) string {
 	return origin
 }
 
+func gitPull() {
+    exec.Command("git", "pull", "--rebase").Run()
+}
+
 func commitChangesToHistoryFile(pr string) {
 	exec.Command("git", "add", "History.markdown").Run()
 	out, err := exec.Command("git", "commit", "-m", "Update history to reflect merge of #"+pr+" [ci skip]").Output()
