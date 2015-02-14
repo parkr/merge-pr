@@ -1,0 +1,7 @@
+#!/bin/bash
+set -e
+script/test
+COV="coverage.out"
+LOCAL_PACKAGE=$(go list)
+ruby -e "cov = File.read('$COV'); cov.gsub!(Regexp.new('$LOCAL_PACKAGE'), '.'); File.open('$COV', 'wb'){ |f| f.puts(cov) }"
+go tool cover -html=coverage.out

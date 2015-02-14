@@ -1,29 +1,46 @@
 package main
 
 import (
-	"log"
-
-	"github.com/octokit/go-octokit/octokit"
+	"flag"
+	"fmt"
+	"os"
 )
 
-var (
-	PullRequestMergeURL = octokit.Hyperlink("repos/{owner}/{repo}/pulls{/number}/merge")
-)
+var verbose = false
+
+func init() {
+	flag.BoolVar(&verbose, "v", false, "run verbosely")
+}
 
 func main() {
-	client := octokit.NewClient(octokit.NetrcAuth{})
-	url, _ := PullRequestMergeURL.Expand(octokit.M{
-		"owner":  "jekyll",
-		"repo":   "jekyll",
-		"number": 3455,
-	})
-    log.Println(url)
+	flag.Parse()
 
-	sawyerReq, err := client.Client.NewRequest(urlStr)
-	if err != nil {
-		log.Fatal(err)
+	number := flag.Arg(0)
+	if number == "" {
+		fmt.Println("Specify a PR number without the #.")
+		os.Exit(1)
+	}
+	owner, repo := fetchRepoOwnerAndName()
+	if owner == "" || repo == "" {
+		fmt.Println("You don't have an 'origin' remote. Failing.")
+		os.Exit(1)
 	}
 
-	req = &Request{client: client, Request: sawyerReq}
-    log.Println(req)
+	err := mergePullRequest(owner, repo, number)
+	if err != nil {
+		if err == NotMergableError {
+			fmt.Print("That PR can't be merged. Continue anyway? (y/n) ")
+			var answer string
+			fmt.Scanln(&answer)
+			if answer != "y" {
+				os.Exit(1)
+			}
+		} else {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+	}
+
+	openEditor()
+	commitChangesToHistoryFile(number)
 }

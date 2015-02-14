@@ -1,1 +1,5 @@
 github.com/octokit/go-octokit/octokit 4a92b367ce16ae5ad32d7163d199b3a6aca7b340
+
+# Testing packages
+github.com/stretchr/testify/assert
+golang.org/x/tools/cmd/cover
