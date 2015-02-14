@@ -21,6 +21,6 @@ fi
 echo "==> Running tests in '$(pwd)/${dir}'"
 pushd $dir > /dev/null
 test -z $(go fmt) || (echo -e "FAIL\tgo fmt failed." && exit 1)
-TZ=UTC go test -cover
+go test
 # go vet || (echo -e "FAIL\tgo vet failed." && exit 1)
 popd > /dev/null
