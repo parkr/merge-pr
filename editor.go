@@ -4,18 +4,13 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"os/exec"
 	"regexp"
 )
 
 var historyFilenameRegexp = regexp.MustCompile("(?i:(History|Changelog).m(ar)?k?d(own)?)")
 
 func openEditor() {
-	cmd := exec.Command(os.Getenv("EDITOR"), historyFile())
-	cmd.Stdin = os.Stdin
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	cmd.Run()
+	shellExec(os.Getenv("EDITOR"), historyFile())
 }
 
 func historyFile() string {
