@@ -57,5 +57,5 @@ func commitChangesToHistoryFile(pr string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(out)
+	fmt.Println(string(out))
 }

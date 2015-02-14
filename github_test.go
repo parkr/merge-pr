@@ -13,7 +13,12 @@ func TestNewRequest(t *testing.T) {
 	assert.IsType(t, &octokit.Request{}, req)
 }
 
-func TestMergePullRequest(t *testing.T) {
+func TestMergePullRequestWithIssue(t *testing.T) {
 	err := mergePullRequest("parkr", "merge-pr", "2")
 	assert.EqualError(t, err, "Not found")
+}
+
+func TestMergePullRequestWithAlreadyMergedPR(t *testing.T) {
+	err := mergePullRequest("parkr", "merge-pr", "1")
+	assert.EqualError(t, err, "Not mergable")
 }
