@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
 	"os"
 )
 
@@ -20,12 +21,18 @@ func main() {
 		fmt.Println("Specify a PR number without the #.")
 		os.Exit(1)
 	}
+	if verbose {
+		log.Println("Fetching owner & repo from your git remotes")
+	}
 	owner, repo := fetchRepoOwnerAndName()
 	if owner == "" || repo == "" {
 		fmt.Println("You don't have an 'origin' remote. Failing.")
 		os.Exit(1)
 	}
 
+	if verbose {
+		log.Println("Attempting to merge the PR.")
+	}
 	err := mergePullRequest(owner, repo, number)
 	if err != nil {
 		if err == NotMergableError {
@@ -41,6 +48,9 @@ func main() {
 		}
 	}
 
+	if verbose {
+		log.Println("Grabbing the PR's data.")
+	}
 	pr, err := getPullRequest(owner, repo, number)
 	if err != nil {
 		fmt.Println(err)
@@ -48,6 +58,9 @@ func main() {
 	}
 
 	if pr.Head.User.Login == owner && pr.Head.Ref != "" {
+		if verbose {
+			log.Println("Deleting the branch.")
+		}
 		err := deleteBranch(owner, repo, pr.Head.Ref)
 		if err != nil {
 			fmt.Println(err)
