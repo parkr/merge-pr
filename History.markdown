@@ -1,5 +1,6 @@
 ## HEAD
 
+  * Shell out to the OS with a common interface (#8)
   * Push once the merge commit is added. (#7)
   * Make the fetching of the history file more flexible. (#6)
   * When running the commit command, just use Stdout. (#5)
