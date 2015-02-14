@@ -55,6 +55,10 @@ func gitPull() {
 	exec.Command("git", "pull", "--rebase").Run()
 }
 
+func gitPush() {
+	exec.Command("git", "push").Run()
+}
+
 func commitChangesToHistoryFile(pr string) {
 	exec.Command("git", "add", "History.markdown").Run()
 	cmd := exec.Command(
