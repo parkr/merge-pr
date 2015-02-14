@@ -1,8 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"log"
+	"os"
 	"os/exec"
 	"regexp"
 	"strings"
@@ -57,9 +57,14 @@ func gitPull() {
 
 func commitChangesToHistoryFile(pr string) {
 	exec.Command("git", "add", "History.markdown").Run()
-	out, err := exec.Command("git", "commit", "-m", "Update history to reflect merge of #"+pr+" [ci skip]").Output()
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println(strings.TrimRight(string(out), "\n"))
+	cmd := exec.Command(
+		"git",
+		"commit",
+		"-m",
+		"Update history to reflect merge of #"+pr+" [ci skip]",
+	)
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Run()
 }
