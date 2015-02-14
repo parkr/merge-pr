@@ -113,5 +113,9 @@ func deleteBranch(owner, repo, branch string) error {
 		return BranchNotFoundError
 	}
 
+	if strings.Contains(deleteBranchErr.Error(), "No media type for this response") {
+		return nil
+	}
+
 	return deleteBranchErr
 }

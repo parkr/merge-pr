@@ -61,5 +61,5 @@ func commitChangesToHistoryFile(pr string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(string(out))
+	fmt.Println(strings.TrimRight(string(out), "\n"))
 }
