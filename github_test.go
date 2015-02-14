@@ -1,6 +1,7 @@
 package main
 
 import (
+	"os"
 	"testing"
 
 	"github.com/octokit/go-octokit/octokit"
@@ -14,11 +15,15 @@ func TestNewRequest(t *testing.T) {
 }
 
 func TestMergePullRequestWithIssue(t *testing.T) {
-	err := mergePullRequest("parkr", "merge-pr", "2")
-	assert.EqualError(t, err, "Not found")
+	if os.Getenv("USER") != "travis" {
+		err := mergePullRequest("parkr", "merge-pr", "2")
+		assert.EqualError(t, err, "Not found")
+	}
 }
 
 func TestMergePullRequestWithAlreadyMergedPR(t *testing.T) {
-	err := mergePullRequest("parkr", "merge-pr", "1")
-	assert.EqualError(t, err, "Not mergable")
+	if os.Getenv("USER") != "travis" {
+		err := mergePullRequest("parkr", "merge-pr", "1")
+		assert.EqualError(t, err, "Not mergable")
+	}
 }
