@@ -26,8 +26,11 @@ Throw your credentials in `$HOME/.netrc`, like this:
 ```text
 machine api.github.com
   login yourusername
-  password mycoolpasswordnooneknows
+  password mypersonalaccesstokenforgithub
 ```
+
+Grab a personal access token on the [GitHub Applications Setting
+page](https://github.com/settings/applications).
 
 ## Usage
 
