@@ -12,19 +12,7 @@ var (
 )
 
 func fetchRepoOwnerAndName() (string, string) {
-	return extractOwnerAndNameFromRemote(gitOriginRemote(gitRemotes()))
-}
-
-func gitRemotes() []string {
-	out, err := exec.Command("git", "remote", "-v").Output()
-	if err != nil {
-		log.Fatal(err)
-	}
-	remotes := strings.Split(
-		strings.TrimRight(string(out), "\n"),
-		"\n",
-	)
-	return remotes
+	return extractOwnerAndNameFromRemote(gitOriginRemote())
 }
 
 func extractOwnerAndNameFromRemote(url string) (string, string) {
@@ -35,19 +23,12 @@ func extractOwnerAndNameFromRemote(url string) (string, string) {
 	return matches[len(matches)-2], matches[len(matches)-1]
 }
 
-func extractUrlFromRemote(remote string) string {
-	return GitRemoteRegexp.FindString(remote)
-}
-
-func gitOriginRemote(remotes []string) string {
-	var origin string
-	for _, remote := range remotes {
-		if strings.HasPrefix(remote, "origin") {
-			origin = GitRemoteRegexp.FindString(remote)
-			break
-		}
+func gitOriginRemote() string {
+	out, err := exec.Command("git", "config", "remote.origin.url").Output()
+	if err != nil {
+		log.Fatal(err)
 	}
-	return origin
+	return strings.TrimRight(string(out), "\n")
 }
 
 func gitPull() {

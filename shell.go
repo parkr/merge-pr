@@ -6,7 +6,7 @@ import (
 	"os/exec"
 )
 
-func shellExec(args ...string) {
+func shellExec(args ...string) error {
 	if verbose {
 		log.Println(args)
 	}
@@ -14,5 +14,5 @@ func shellExec(args ...string) {
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
-	cmd.Run()
+	return cmd.Run()
 }
