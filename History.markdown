@@ -1,5 +1,6 @@
 ## HEAD
 
+  * git: use 'git config' to get origin URL (#12)
   * Add more printed info with the `-v` flag (#9)
   * Shell out to the OS with a common interface (#8)
   * Push once the merge commit is added. (#7)
