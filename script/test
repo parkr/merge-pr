@@ -11,10 +11,14 @@ export GOPATH="$(pwd)"
 
 # Run the test
 
-if test -z "$1"; then
-    dir="."
+if test -n "$1" && test -e "$1"; then
+	if test -d "$1"; then
+		dir="$1"
+	else
+		dir=$(dirname $1)
+	fi
 else
-    dir="$1"
+    dir="."
 fi
 
 test -f "$HOME/.netrc" || {
