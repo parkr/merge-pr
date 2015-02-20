@@ -1,0 +1,21 @@
+#!/bin/bash
+
+set -e
+
+RELEASE="$1"
+
+test -z "$RELEASE" && {
+  echo "release: no version number specified. need X.X.X"
+  exit 1
+}
+
+(echo "$RELEASE" | grep -v "v") || {
+  echo "release: just the numbers in the release, yo"
+  exit 1
+}
+
+$EDITOR History.markdown
+
+git add History.markdown
+git commit -m "Release :gem: v$RELEASE"
+git tag -m v$RELEASE -a v$RELEASE
