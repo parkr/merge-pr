@@ -1,4 +1,4 @@
-## HEAD
+## 1.0.0 / 2015-02-19
 
   * git: use 'git config' to get origin URL (#12)
   * Add more printed info with the `-v` flag (#9)
