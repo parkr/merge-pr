@@ -1,45 +1,22 @@
 package main
 
 import (
+	"regexp"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 var (
-	gitRemoteSSH   = "origin\tgit@github.com:parkr/merge-pr.git\t(push)"
-	gitRemoteHTTPS = "origin\thttps://github.com/parkr/merge-pr.git\t(push)"
-	gitRemoteGit   = "origin\tgit://github.com/parkr/merge-pr.git\t(fetch)"
+	gitRemoteSSH    = "git@github.com:parkr/merge-pr.git"
+	gitRemoteHTTPS  = "https://github.com/parkr/merge-pr.git"
+	gitRemoteGit    = "git://github.com/parkr/merge-pr.git"
+	gitRemoteRegexp = regexp.MustCompile("git(@|://)github.com(:|/)parkr/merge-pr.git")
 )
 
-func TestOriginRemoteWithOneRemote(t *testing.T) {
-	remotes := []string{"origin\tgit@github.com:parkr/merge-pr.git\t(fetch)"}
-	origin := gitOriginRemote(remotes)
-	assert.Equal(t, "git@github.com:parkr/merge-pr.git", origin)
-}
-
-func TestOriginRemoteWithLotsOfRemotes(t *testing.T) {
-	remotes := []string{
-		gitRemoteGit,
-		gitRemoteSSH,
-	}
-	origin := gitOriginRemote(remotes)
-	assert.Equal(t, "git://github.com/parkr/merge-pr.git", origin)
-}
-
-func TestExtractRemoteWithSSHUrl(t *testing.T) {
-	url := extractUrlFromRemote(gitRemoteSSH)
-	assert.Equal(t, "git@github.com:parkr/merge-pr.git", url)
-}
-
-func TestExtractRemoteWithGitUrl(t *testing.T) {
-	url := extractUrlFromRemote(gitRemoteGit)
-	assert.Equal(t, "git://github.com/parkr/merge-pr.git", url)
-}
-
-func TestExtractOwnerWithHTTPSUrl(t *testing.T) {
-	url := extractUrlFromRemote(gitRemoteHTTPS)
-	assert.Equal(t, "https://github.com/parkr/merge-pr.git", url)
+func TestOriginRemote(t *testing.T) {
+	origin := gitOriginRemote()
+	assert.Regexp(t, gitRemoteRegexp, origin)
 }
 
 func TestExtractOwnerAndRepoWithSSHUrl(t *testing.T) {
@@ -70,10 +47,4 @@ func TestFetchRepoOwnerAndName(t *testing.T) {
 	owner, repo := fetchRepoOwnerAndName()
 	assert.Contains(t, owner, "parkr")
 	assert.Contains(t, repo, "merge-pr")
-}
-
-func TestGitRemotes(t *testing.T) {
-	remotes := gitRemotes()
-	assert.Contains(t, remotes[0], "parkr/merge-pr.git (fetch)")
-	assert.Contains(t, remotes[1], "parkr/merge-pr.git (push)")
 }
