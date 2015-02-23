@@ -12,6 +12,8 @@ won't read through your commit history.
 This tool aims to make it easy to merge PR's and add a line to the
 CHANGELOG (`History.markdown` by default). All with one command.
 
+Here's more on [why you should keep a changelog.](http://keepachangelog.com/)
+
 ## Installation
 
 You need [Go](https://golang.org) and you need your `$GOPATH` set &
