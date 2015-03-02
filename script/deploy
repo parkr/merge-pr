@@ -15,7 +15,7 @@ deploy_dir="$app_dir/releases/$version"
 ssh mango.dev -- "cd /var/www/$name && (git branch | grep \"* master\") && GOROOT=/usr/local/go/v1.4.1 script/cibuild"
 # Pull it down from mango
 scp mango.dev:/var/www/$name/$name ./$name-${version}
-# Grab the nodes for that enviornment
+# Grab the nodes for that environment
 nodes=$(knife node list | grep "${VSCO}-${name}")
 
 # Deploy!
