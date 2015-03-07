@@ -57,11 +57,11 @@ func main() {
 		os.Exit(1)
 	}
 
-	if pr.Head.User.Login == owner && pr.Head.Ref != "" {
+	if *pr.Head.User.Login == owner && *pr.Head.Ref != "" {
 		if verbose {
 			log.Println("Deleting the branch.")
 		}
-		err := deleteBranch(owner, repo, pr.Head.Ref)
+		err := deleteBranch(owner, repo, *pr.Head.Ref)
 		if err != nil {
 			fmt.Println(err)
 		}

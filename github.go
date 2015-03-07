@@ -4,16 +4,19 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"net/http"
+	"os"
+	"path/filepath"
+	"strconv"
 	"strings"
 
-	"github.com/octokit/go-octokit/octokit"
+	"github.com/bgentry/go-netrc/netrc"
+	"github.com/google/go-github/github"
+	"golang.org/x/oauth2"
 )
 
 var (
-	client *octokit.Client
-
-	mergePullRequestUrl = octokit.Hyperlink("repos/{owner}/{repo}/pulls{/number}/merge")
-	deleteBranchUrl     = octokit.Hyperlink("repos/{owner}/{repo}/git/refs/heads/{branch}")
+	client *github.Client
 
 	NotMergableError        = errors.New("Not mergable")
 	NotFoundError           = errors.New("Not found")
@@ -22,34 +25,51 @@ var (
 )
 
 func init() {
-	client = octokit.NewClient(octokit.NetrcAuth{})
+	client = github.NewClient(authenticatedClient())
 }
 
-func newMergeRequest(owner, repo, number string) (*octokit.Request, error) {
-	url, _ := mergePullRequestUrl.Expand(octokit.M{
-		"owner":  owner,
-		"repo":   repo,
-		"number": number,
-	})
-
-	return client.NewRequest(url.String())
+type tokenSource struct {
+	token *oauth2.Token
 }
 
-func getPullRequest(owner, repo, number string) (*octokit.PullRequest, error) {
-	url, _ := octokit.PullRequestsURL.Expand(octokit.M{
-		"owner":  owner,
-		"repo":   repo,
-		"number": number,
-	})
-	req, err := client.NewRequest(url.String())
-	if err != nil {
-		return nil, err
+func (t *tokenSource) Token() (*oauth2.Token, error) {
+	return t.token, nil
+}
+
+func netrcPath() string {
+	filename := filepath.Join(os.Getenv("HOME"), ".netrc")
+	if _, err := os.Stat(filename); os.IsNotExist(err) {
+		panic(fmt.Sprintf("no such file or directory: %s", filename))
 	}
+	return filename
+}
 
-	var pullRequest octokit.PullRequest
-	_, prGetErr := req.Get(&pullRequest)
+func accessTokenFromNetrc() string {
+	machine, err := netrc.FindMachine(netrcPath(), "api.github.com")
+	if err != nil {
+		panic(err)
+	}
+	return machine.Password
+}
 
-	return &pullRequest, prGetErr
+func authenticatedClient() *http.Client {
+	ts := &tokenSource{
+		&oauth2.Token{AccessToken: accessTokenFromNetrc()},
+	}
+	return oauth2.NewClient(oauth2.NoContext, ts)
+}
+
+func stringToInt(number string) int {
+	intVal, err := strconv.Atoi(number)
+	if err != nil {
+		panic(err)
+	}
+	return intVal
+}
+
+func getPullRequest(owner, repo, number string) (*github.PullRequest, error) {
+	pr, _, prGetErr := client.PullRequests.Get(owner, repo, stringToInt(number))
+	return pr, prGetErr
 }
 
 func mergePullRequest(owner, repo, number string) error {
@@ -57,22 +77,17 @@ func mergePullRequest(owner, repo, number string) error {
 		log.Printf("Attempting to merge PR #%s on %s/%s...\n", number, owner, repo)
 	}
 
-	req, err := newMergeRequest(owner, repo, number)
-	if err != nil {
-		return err
-	}
-
-	var merged map[string]interface{}
-	_, mergeErr := req.Put(map[string]string{}, &merged)
+	commitMsg := fmt.Sprintf("Merge pull request %v", number)
+	_, _, mergeErr := client.PullRequests.Merge(owner, repo, stringToInt(number), commitMsg)
 
 	if mergeErr != nil {
 		if verbose {
 			fmt.Println("Received an error!", mergeErr)
 		}
-		if strings.Contains(mergeErr.Error(), "405 - Pull Request is not mergeable") {
+		if strings.Contains(mergeErr.Error(), "405 Pull Request is not mergeable") {
 			return NotMergableError
 		} else {
-			if strings.Contains(mergeErr.Error(), "404 - Not Found") {
+			if strings.Contains(mergeErr.Error(), "404 Not Found") {
 				return NotFoundError
 			} else {
 				return mergeErr
@@ -96,20 +111,9 @@ func deleteBranch(owner, repo, branch string) error {
 		return NonDeletableBranchError
 	}
 
-	url, _ := deleteBranchUrl.Expand(octokit.M{
-		"owner":  owner,
-		"repo":   repo,
-		"branch": branch,
-	})
-	req, err := client.NewRequest(url.String())
-	if err != nil {
-		return err
-	}
+	_, deleteBranchErr := client.Git.DeleteRef(owner, repo, branch)
 
-	var deleted map[string]interface{}
-	_, deleteBranchErr := req.Delete(&deleted)
-
-	if strings.Contains(deleteBranchErr.Error(), "422 - Reference does not exist") {
+	if strings.Contains(deleteBranchErr.Error(), "422 Reference does not exist") {
 		return BranchNotFoundError
 	}
 
