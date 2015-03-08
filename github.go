@@ -8,7 +8,6 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
-	"strings"
 
 	"github.com/bgentry/go-netrc/netrc"
 	"github.com/google/go-github/github"
@@ -19,9 +18,9 @@ var (
 	client *github.Client
 
 	NotMergableError        = errors.New("Not mergable")
-	NotFoundError           = errors.New("Not found")
 	BranchNotFoundError     = errors.New("Branch not found")
 	NonDeletableBranchError = errors.New("Branch cannot be deleted")
+	PullReqNotFoundError    = errors.New("Pull request not found")
 )
 
 func init() {
@@ -68,7 +67,15 @@ func stringToInt(number string) int {
 }
 
 func getPullRequest(owner, repo, number string) (*github.PullRequest, error) {
-	pr, _, prGetErr := client.PullRequests.Get(owner, repo, stringToInt(number))
+	pr, res, prGetErr := client.PullRequests.Get(owner, repo, stringToInt(number))
+	if prGetErr != nil {
+		switch res.StatusCode {
+		case 404:
+			return nil, PullReqNotFoundError
+		default:
+			return nil, prGetErr
+		}
+	}
 	return pr, prGetErr
 }
 
@@ -78,22 +85,39 @@ func mergePullRequest(owner, repo, number string) error {
 	}
 
 	commitMsg := fmt.Sprintf("Merge pull request %v", number)
-	_, _, mergeErr := client.PullRequests.Merge(owner, repo, stringToInt(number), commitMsg)
+	_, res, mergeErr := client.PullRequests.Merge(owner, repo, stringToInt(number), commitMsg)
 
 	if mergeErr != nil {
 		if verbose {
 			fmt.Println("Received an error!", mergeErr)
 		}
-		if strings.Contains(mergeErr.Error(), "405 Pull Request is not mergeable") {
+		switch res.StatusCode {
+		case 405:
 			return NotMergableError
-		} else {
-			if strings.Contains(mergeErr.Error(), "404 Not Found") {
-				return NotFoundError
-			} else {
-				return mergeErr
-			}
+		case 404:
+			return PullReqNotFoundError
+		default:
+			return mergeErr
 		}
+	}
 
+	return nil
+}
+
+func deleteBranchForPullRequest(owner, repo, number string) error {
+	pr, prGetErr := getPullRequest(owner, repo, number)
+	if prGetErr != nil {
+		return prGetErr
+	}
+
+	if *pr.Head.User.Login == owner && *pr.Head.Ref != "" {
+		if verbose {
+			log.Println("Deleting the branch.")
+		}
+		err := deleteBranch(owner, repo, *pr.Head.Ref)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -111,15 +135,16 @@ func deleteBranch(owner, repo, branch string) error {
 		return NonDeletableBranchError
 	}
 
-	_, deleteBranchErr := client.Git.DeleteRef(owner, repo, branch)
+	res, deleteBranchErr := client.Git.DeleteRef(owner, repo, branch)
 
-	if strings.Contains(deleteBranchErr.Error(), "422 Reference does not exist") {
-		return BranchNotFoundError
+	if deleteBranchErr != nil {
+		switch res.StatusCode {
+		case 422:
+			return BranchNotFoundError
+		default:
+			return deleteBranchErr
+		}
 	}
 
-	if strings.Contains(deleteBranchErr.Error(), "No media type for this response") {
-		return nil
-	}
-
-	return deleteBranchErr
+	return nil
 }
