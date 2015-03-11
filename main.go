@@ -51,7 +51,7 @@ func main() {
 		}
 		err = deleteBranchForPullRequest(owner, repo, number)
 		if err != nil {
-			fmt.Println("Error deleting the branch: %v", err)
+			fmt.Println("Error deleting the branch:", err)
 		}
 	} else {
 		if err == NotMergableError {
