@@ -1,5 +1,6 @@
 ## HEAD
 
+  * github: delete the branch properly (#18)
   * Replace go-octokit with go-github. (#17)
 
 ## 1.0.0 / 2015-02-19
