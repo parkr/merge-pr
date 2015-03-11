@@ -22,7 +22,7 @@ func main() {
 	flag.Parse()
 
 	if showVersion {
-		fmt.Println("merge-pr %v", version)
+		fmt.Printf("merge-pr %v\n", version)
 		os.Exit(0)
 	}
 
