@@ -11,5 +11,5 @@ echo "Creating release v$RELEASE"
 $EDITOR History.markdown
 
 git add History.markdown
-git commit -m "Release :gem: v$RELEASE" || true
+git commit --allow-empty -m "Release :gem: v$RELEASE"
 git tag -m v$RELEASE -a v$RELEASE
