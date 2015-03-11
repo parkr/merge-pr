@@ -1,4 +1,4 @@
-## HEAD
+## 1.1.0 / 2015-03-11
 
   * git: only merge if the current branch is master, staging, or dev (#19)
   * github: delete the branch properly (#18)
