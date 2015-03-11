@@ -1,5 +1,6 @@
 ## HEAD
 
+  * git: only merge if the current branch is master, staging, or dev (#19)
   * github: delete the branch properly (#18)
   * Replace go-octokit with go-github. (#17)
 
