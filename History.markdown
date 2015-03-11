@@ -1,3 +1,7 @@
+## HEAD
+
+  * Replace go-octokit with go-github. (#17)
+
 ## 1.0.0 / 2015-02-19
 
   * git: use 'git config' to get origin URL (#12)
