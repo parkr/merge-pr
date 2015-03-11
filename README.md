@@ -58,6 +58,14 @@ to run the tests and build the binary if the tests are successful.
 Once you're happy with your change, submit a PR. If I like it, I'll use
 this tool to merge it!
 
+## Versioning
+
+We adhere to SemVer where applicable. To see the version of your copy of
+`merge-pr`, run `merge-pr -V`.
+
+To release a new version, change the version in `main.go`, and run
+`script/release`.
+
 ## Credits / License
 
 MIT License, copyright Parker Moore. Details in the `LICENSE` file.
