@@ -1,15 +1,35 @@
 package main
 
 import (
-	"log"
-	"os/exec"
+	"fmt"
 	"regexp"
-	"strings"
 )
 
 var (
-	GitRemoteRegexp = regexp.MustCompile("(https|git)(@|://)github.com(:|/)([a-zA-Z0-9-_]+)/([a-zA-Z0-9-_]+).git")
+	GitRemoteRegexp    = regexp.MustCompile("(https|git)(@|://)github.com(:|/)([a-zA-Z0-9-_]+)/([a-zA-Z0-9-_]+).git")
+	acceptableBranches = []string{"master", "staging", "dev"}
 )
+
+func contains(s []string, e string) bool {
+	for _, a := range s {
+		if a == e {
+			return true
+		}
+	}
+	return false
+}
+
+func currentBranch() string {
+	return shellOutput("git", "rev-parse", "--abbrev-ref", "HEAD")
+}
+
+func isAcceptableCurrentBranch() error {
+	currBranch := currentBranch()
+	if !contains(acceptableBranches, currBranch) {
+		return fmt.Errorf("Unacceptable local branch: %s", currBranch)
+	}
+	return nil
+}
 
 func fetchRepoOwnerAndName() (string, string) {
 	return extractOwnerAndNameFromRemote(gitOriginRemote())
@@ -24,11 +44,7 @@ func extractOwnerAndNameFromRemote(url string) (string, string) {
 }
 
 func gitOriginRemote() string {
-	out, err := exec.Command("git", "config", "remote.origin.url").Output()
-	if err != nil {
-		log.Fatal(err)
-	}
-	return strings.TrimRight(string(out), "\n")
+	return shellOutput("git", "config", "remote.origin.url")
 }
 
 func gitPull() {

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"regexp"
 	"testing"
 
@@ -13,6 +14,26 @@ var (
 	gitRemoteGit    = "git://github.com/parkr/merge-pr.git"
 	gitRemoteRegexp = regexp.MustCompile("git(@|://)github.com(:|/)parkr/merge-pr.git")
 )
+
+func TestCurrentBranch(t *testing.T) {
+	branch := currentBranch()
+	assert.NotEmpty(t, branch)
+}
+
+func TestIsAcceptableCurrentBranch(t *testing.T) {
+	branch := currentBranch()
+	err := isAcceptableCurrentBranch()
+	switch branch {
+	case "master":
+		fallthrough
+	case "staging":
+		fallthrough
+	case "dev":
+		assert.NoError(t, err)
+	default:
+		assert.EqualError(t, err, fmt.Sprintf("Unacceptable local branch: %s", branch))
+	}
+}
 
 func TestOriginRemote(t *testing.T) {
 	origin := gitOriginRemote()

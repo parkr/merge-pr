@@ -33,6 +33,14 @@ func main() {
 	}
 
 	if verbose {
+		log.Println("Determining if your local branch is cool.")
+	}
+	err := isAcceptableCurrentBranch()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if verbose {
 		log.Println("Fetching owner & repo from your git remotes")
 	}
 	owner, repo := fetchRepoOwnerAndName()
@@ -44,7 +52,7 @@ func main() {
 	if verbose {
 		log.Println("Attempting to merge the PR.")
 	}
-	err := mergePullRequest(owner, repo, number)
+	err = mergePullRequest(owner, repo, number)
 	if err == nil {
 		if verbose {
 			log.Println("Deleting branch for PR.")
