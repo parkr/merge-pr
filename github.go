@@ -135,7 +135,9 @@ func deleteBranch(owner, repo, branch string) error {
 		return NonDeletableBranchError
 	}
 
-	res, deleteBranchErr := client.Git.DeleteRef(owner, repo, branch)
+	ref := fmt.Sprintf("heads/%s", branch)
+
+	res, deleteBranchErr := client.Git.DeleteRef(owner, repo, ref)
 
 	if deleteBranchErr != nil {
 		switch res.StatusCode {
