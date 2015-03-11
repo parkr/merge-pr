@@ -10,7 +10,7 @@ import (
 var (
 	verbose     bool
 	showVersion bool
-	version     = "1.1.0"
+	version     = "1.x-dev"
 )
 
 func init() {
