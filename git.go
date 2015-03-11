@@ -47,8 +47,8 @@ func gitOriginRemote() string {
 	return shellOutput("git", "config", "remote.origin.url")
 }
 
-func gitPull() {
-	shellExec("git", "pull", "--rebase")
+func gitPull() error {
+	return shellExec("git", "pull", "--rebase")
 }
 
 func gitPush() {

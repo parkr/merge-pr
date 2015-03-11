@@ -75,7 +75,9 @@ func main() {
 		}
 	}
 
-	gitPull()
+	if err := gitPull(); err != nil {
+		log.Fatal(err)
+	}
 	openEditor()
 	commitChangesToHistoryFile(number)
 	gitPush()
