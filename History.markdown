@@ -1,4 +1,4 @@
-## HEAD
+## 1.1.1 / 2015-05-07
 
   * git: put `[ci skip]` in the commit msg body instead of the summary (#22)
 
