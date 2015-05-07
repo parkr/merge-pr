@@ -61,6 +61,8 @@ func commitChangesToHistoryFile(pr string) {
 		"git",
 		"commit",
 		"-m",
-		"Update history to reflect merge of #"+pr+" [ci skip]",
+		"Update history to reflect merge of #"+pr,
+		"-m",
+		"[ci skip]",
 	)
 }
