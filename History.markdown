@@ -1,3 +1,7 @@
+## HEAD
+
+  * git: put `[ci skip]` in the commit msg body instead of the summary (#22)
+
 ## 1.1.0 / 2015-03-11
 
   * git: if 'git pull' fails, do not continue (#21)
