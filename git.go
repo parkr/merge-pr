@@ -56,7 +56,7 @@ func gitPush() {
 }
 
 func commitChangesToHistoryFile(pr string) {
-	shellExec("git", "add", "History.markdown")
+	shellExec("git", "add", historyFile())
 	shellExec(
 		"git",
 		"commit",
