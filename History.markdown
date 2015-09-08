@@ -1,3 +1,7 @@
+## HEAD
+
+  * git: don't requre a `.git` suffix for the git remote URL (#26)
+
 ## 1.1.2 / 2015-05-12
 
   * git: commit computed history file instead of hard-coded history.markdown (#24)
