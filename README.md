@@ -2,6 +2,8 @@
 
 Merge your GitHub pull requests from the command line.
 
+[![Build Status](https://travis-ci.org/parkr/merge-pr.svg?branch=master)](https://travis-ci.org/parkr/merge-pr)
+
 ## Motivation
 
 Merging pull requests in the browser is nice, sure, but you lose a lot of
