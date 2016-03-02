@@ -25,8 +25,7 @@ func shellExec(args ...string) error {
 func shellOutput(args ...string) string {
 	out, err := commandFromArgs(args...).Output()
 	if err != nil {
-		log.Fatal(err)
-		return ""
+		fatalError(err.Error())
 	}
 	return strings.TrimRight(string(out), "\n")
 }

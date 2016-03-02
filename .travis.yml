@@ -1,4 +1,5 @@
 language: go
-install: script/bootstrap
-script: script/test
+go:
+  - 1.5
+  - 1.6
 sudo: false

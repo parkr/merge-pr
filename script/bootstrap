@@ -1,10 +1,2 @@
 #!/bin/bash
-
-cd $(dirname $0)/..
-
-which gpm > /dev/null 2>&1 || {
-    curl -s https://raw.githubusercontent.com/pote/gpm/v1.3.1/bin/gpm | GOPATH="$(pwd)" bash
-    exit 0
-}
-
-GOPATH="$(pwd)" gpm install
+make deps

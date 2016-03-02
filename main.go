@@ -18,6 +18,11 @@ func init() {
 	flag.BoolVar(&showVersion, "V", false, "print version and exit")
 }
 
+func fatalError(format string, args ...interface{}) {
+	fmt.Printf(format, args...)
+	os.Exit(1)
+}
+
 func main() {
 	flag.Parse()
 
@@ -28,8 +33,7 @@ func main() {
 
 	number := flag.Arg(0)
 	if number == "" {
-		fmt.Println("Specify a PR number without the #.")
-		os.Exit(1)
+		fatalError("Specify a PR number without the #.")
 	}
 
 	if verbose {
@@ -37,7 +41,7 @@ func main() {
 	}
 	err := isAcceptableCurrentBranch()
 	if err != nil {
-		log.Fatal(err)
+		fatalError(err.Error())
 	}
 
 	if verbose {
@@ -45,8 +49,7 @@ func main() {
 	}
 	owner, repo := fetchRepoOwnerAndName()
 	if owner == "" || repo == "" {
-		fmt.Println("You don't have an 'origin' remote. Failing.")
-		os.Exit(1)
+		fatalError("You don't have an 'origin' remote. Failing.")
 	}
 
 	if verbose {
@@ -70,8 +73,7 @@ func main() {
 				os.Exit(1)
 			}
 		} else {
-			fmt.Println(err)
-			os.Exit(1)
+			fatalError(err.Error())
 		}
 	}
 
