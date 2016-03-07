@@ -2,17 +2,15 @@ package main
 
 import (
 	"fmt"
-	"regexp"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 var (
-	gitRemoteSSH    = "git@github.com:parkr/merge-pr.git"
-	gitRemoteHTTPS  = "https://github.com/parkr/merge-pr.git"
-	gitRemoteGit    = "git://github.com/parkr/merge-pr.git"
-	gitRemoteRegexp = regexp.MustCompile("git(@|://)github.com(:|/)parkr/merge-pr.git")
+	gitRemoteSSH   = "git@github.com:parkr/merge-pr.git"
+	gitRemoteHTTPS = "https://github.com/parkr/merge-pr.git"
+	gitRemoteGit   = "git://github.com/parkr/merge-pr.git"
 )
 
 func TestCurrentBranch(t *testing.T) {
@@ -36,8 +34,11 @@ func TestIsAcceptableCurrentBranch(t *testing.T) {
 }
 
 func TestOriginRemote(t *testing.T) {
+	assert.Regexp(t, GitRemoteRegexp, gitRemoteGit)
+	assert.Regexp(t, GitRemoteRegexp, gitRemoteSSH)
+
 	origin := gitOriginRemote()
-	assert.Regexp(t, gitRemoteRegexp, origin)
+	assert.Regexp(t, GitRemoteRegexp, origin)
 }
 
 func TestExtractOwnerAndRepoWithSSHUrl(t *testing.T) {
