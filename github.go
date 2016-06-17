@@ -85,7 +85,7 @@ func mergePullRequest(owner, repo, number string) error {
 	}
 
 	commitMsg := fmt.Sprintf("Merge pull request %v", number)
-	_, res, mergeErr := client.PullRequests.Merge(owner, repo, stringToInt(number), commitMsg)
+	_, res, mergeErr := client.PullRequests.Merge(owner, repo, stringToInt(number), commitMsg, &github.PullRequestOptions{})
 
 	if mergeErr != nil {
 		if verbose {
