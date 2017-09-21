@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"log"
@@ -67,7 +68,7 @@ func stringToInt(number string) int {
 }
 
 func getPullRequest(owner, repo, number string) (*github.PullRequest, error) {
-	pr, res, prGetErr := client.PullRequests.Get(owner, repo, stringToInt(number))
+	pr, res, prGetErr := client.PullRequests.Get(context.Background(), owner, repo, stringToInt(number))
 	if prGetErr != nil {
 		switch res.StatusCode {
 		case 404:
@@ -85,7 +86,14 @@ func mergePullRequest(owner, repo, number string) error {
 	}
 
 	commitMsg := fmt.Sprintf("Merge pull request %v", number)
-	_, res, mergeErr := client.PullRequests.Merge(owner, repo, stringToInt(number), commitMsg, &github.PullRequestOptions{})
+	_, res, mergeErr := client.PullRequests.Merge(
+		context.Background(),
+		owner,
+		repo,
+		stringToInt(number),
+		commitMsg,
+		&github.PullRequestOptions{},
+	)
 
 	if mergeErr != nil {
 		if verbose {
@@ -137,7 +145,7 @@ func deleteBranch(owner, repo, branch string) error {
 
 	ref := fmt.Sprintf("heads/%s", branch)
 
-	res, deleteBranchErr := client.Git.DeleteRef(owner, repo, ref)
+	res, deleteBranchErr := client.Git.DeleteRef(context.Background(), owner, repo, ref)
 
 	if deleteBranchErr != nil {
 		switch res.StatusCode {
