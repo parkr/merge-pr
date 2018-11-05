@@ -13,6 +13,7 @@ import (
 	"github.com/bgentry/go-netrc/netrc"
 	"github.com/google/go-github/github"
 	"golang.org/x/oauth2"
+	"gopkg.in/yaml.v2"
 )
 
 var (
@@ -25,7 +26,7 @@ var (
 )
 
 func init() {
-	client = github.NewClient(authenticatedClient())
+	client = github.NewClient(newClient())
 }
 
 type tokenSource struct {
@@ -34,6 +35,36 @@ type tokenSource struct {
 
 func (t *tokenSource) Token() (*oauth2.Token, error) {
 	return t.token, nil
+}
+
+func hubConfigPath() string {
+	filename := filepath.Join(os.Getenv("HOME"), ".config", "hub")
+	if _, err := os.Stat(filename); os.IsNotExist(err) {
+		panic(fmt.Sprintf("no such file or directory: %s", filename))
+	}
+	return filename
+}
+
+func accessTokenFromHubConfig() string {
+	f, err := os.Open(hubConfigPath())
+	if err != nil {
+		return ""
+	}
+
+	config := struct {
+		GitHub []struct {
+			OauthToken string `yaml:"oauth_token"`
+		} `yaml:"github.com"`
+	}{}
+	err = yaml.NewDecoder(f).Decode(&config)
+	if err != nil {
+		log.Printf("couldn't decode hub config: %+v", err)
+		return ""
+	}
+	if len(config.GitHub) == 0 {
+		return ""
+	}
+	return config.GitHub[0].OauthToken
 }
 
 func netrcPath() string {
@@ -49,14 +80,24 @@ func accessTokenFromNetrc() string {
 	if err != nil {
 		panic(err)
 	}
+	if machine == nil {
+		return ""
+	}
 	return machine.Password
 }
 
-func authenticatedClient() *http.Client {
-	ts := &tokenSource{
-		&oauth2.Token{AccessToken: accessTokenFromNetrc()},
+func newClient() *http.Client {
+	if accessToken := accessTokenFromNetrc(); accessToken != "" {
+		return oauth2.NewClient(oauth2.NoContext, &tokenSource{
+			&oauth2.Token{AccessToken: accessToken},
+		})
 	}
-	return oauth2.NewClient(oauth2.NoContext, ts)
+	if accessToken := accessTokenFromHubConfig(); accessToken != "" {
+		return oauth2.NewClient(oauth2.NoContext, &tokenSource{
+			&oauth2.Token{AccessToken: accessToken},
+		})
+	}
+	return http.DefaultClient
 }
 
 func stringToInt(number string) int {

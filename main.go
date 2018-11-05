@@ -19,7 +19,7 @@ func init() {
 }
 
 func fatalError(format string, args ...interface{}) {
-	fmt.Printf(format, args...)
+	fmt.Printf(format+"\n", args...)
 	os.Exit(1)
 }
 
