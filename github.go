@@ -25,7 +25,7 @@ var (
 	PullReqNotFoundError    = errors.New("Pull request not found")
 )
 
-func init() {
+func initializeGitHubClient() {
 	client = github.NewClient(newClient())
 }
 

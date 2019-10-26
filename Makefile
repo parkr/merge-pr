@@ -21,3 +21,9 @@ build: deps
 test: deps testdeps
 	go fmt
 	go test
+
+build-docker:
+	docker build -t parkr/merge-pr .
+
+test-docker: build-docker
+	docker run --rm parkr/merge-pr -V

@@ -13,17 +13,14 @@ var (
 	version     = "1.1.2"
 )
 
-func init() {
-	flag.BoolVar(&verbose, "v", false, "run verbosely")
-	flag.BoolVar(&showVersion, "V", false, "print version and exit")
-}
-
 func fatalError(format string, args ...interface{}) {
 	fmt.Printf(format+"\n", args...)
 	os.Exit(1)
 }
 
 func main() {
+	flag.BoolVar(&verbose, "v", false, "run verbosely")
+	flag.BoolVar(&showVersion, "V", false, "print version and exit")
 	flag.Parse()
 
 	if showVersion {
@@ -43,6 +40,8 @@ func main() {
 	if err != nil {
 		fatalError(err.Error())
 	}
+
+	initializeGitHubClient()
 
 	if verbose {
 		log.Println("Fetching owner & repo from your git remotes")
