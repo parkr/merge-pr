@@ -7,7 +7,7 @@ import (
 
 var (
 	GitRemoteRegexp    = regexp.MustCompile("(https|git)(@|://)github.com(:|/)([a-zA-Z0-9-_]+)/([a-zA-Z0-9-_]+)(?:\\.git)?")
-	acceptableBranches = []string{"master", "staging", "dev"}
+	acceptableBranches = []string{"master", "main", "staging", "dev"}
 )
 
 func contains(s []string, e string) bool {

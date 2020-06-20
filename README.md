@@ -2,7 +2,7 @@
 
 Merge your GitHub pull requests from the command line.
 
-[![Build Status](https://travis-ci.org/parkr/merge-pr.svg?branch=master)](https://travis-ci.org/parkr/merge-pr)
+[![Build Status](https://travis-ci.org/parkr/merge-pr.svg?branch=main)](https://travis-ci.org/parkr/merge-pr)
 
 ## Motivation
 

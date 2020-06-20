@@ -22,11 +22,7 @@ func TestIsAcceptableCurrentBranch(t *testing.T) {
 	branch := currentBranch()
 	err := isAcceptableCurrentBranch()
 	switch branch {
-	case "master":
-		fallthrough
-	case "staging":
-		fallthrough
-	case "dev":
+	case "main", "master", "staging", "dev":
 		assert.NoError(t, err)
 	default:
 		assert.EqualError(t, err, fmt.Sprintf("Unacceptable local branch: %s", branch))
