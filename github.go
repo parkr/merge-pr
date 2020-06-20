@@ -174,13 +174,7 @@ func deleteBranchForPullRequest(owner, repo, number string) error {
 
 func deleteBranch(owner, repo, branch string) error {
 	switch branch {
-	case "master":
-		fallthrough
-	case "gh-pages":
-		fallthrough
-	case "dev":
-		fallthrough
-	case "staging":
+	case "main", "master", "gh-pages", "dev", "staging":
 		return NonDeletableBranchError
 	}
 
