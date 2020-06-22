@@ -11,6 +11,7 @@ var (
 	verbose     bool
 	showVersion bool
 	version     = "1.1.2"
+	revision    = "dev"
 )
 
 func fatalError(format string, args ...interface{}) {
@@ -24,7 +25,7 @@ func main() {
 	flag.Parse()
 
 	if showVersion {
-		fmt.Printf("merge-pr %v\n", version)
+		fmt.Printf("merge-pr %s (%s)\n", version, revision)
 		os.Exit(0)
 	}
 
