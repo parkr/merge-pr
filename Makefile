@@ -1,4 +1,5 @@
 RELEASE=$(shell git rev-parse HEAD)
+REV=$(shell git rev-parse HEAD)
 
 all: build test
 
@@ -21,3 +22,9 @@ build: deps
 test: deps testdeps
 	go fmt
 	go test
+
+docker-build:
+	docker build --build-arg REV=$(REV) -t parkr/merge-pr .
+
+docker-test: docker-build
+	docker run --rm parkr/merge-pr -V

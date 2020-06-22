@@ -11,12 +11,8 @@ var (
 	verbose     bool
 	showVersion bool
 	version     = "1.1.2"
+	revision    = "dev"
 )
-
-func init() {
-	flag.BoolVar(&verbose, "v", false, "run verbosely")
-	flag.BoolVar(&showVersion, "V", false, "print version and exit")
-}
 
 func fatalError(format string, args ...interface{}) {
 	fmt.Printf(format+"\n", args...)
@@ -24,10 +20,12 @@ func fatalError(format string, args ...interface{}) {
 }
 
 func main() {
+	flag.BoolVar(&verbose, "v", false, "run verbosely")
+	flag.BoolVar(&showVersion, "V", false, "print version and exit")
 	flag.Parse()
 
 	if showVersion {
-		fmt.Printf("merge-pr %v\n", version)
+		fmt.Printf("merge-pr %s (%s)\n", version, revision)
 		os.Exit(0)
 	}
 
@@ -43,6 +41,8 @@ func main() {
 	if err != nil {
 		fatalError(err.Error())
 	}
+
+	initializeGitHubClient()
 
 	if verbose {
 		log.Println("Fetching owner & repo from your git remotes")
