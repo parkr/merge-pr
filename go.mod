@@ -8,5 +8,5 @@ require (
 	github.com/google/go-querystring v1.0.0 // indirect
 	github.com/stretchr/testify v1.6.1
 	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
-	gopkg.in/yaml.v2 v2.3.0
+	gopkg.in/yaml.v2 v2.4.0
 )
