@@ -6,7 +6,7 @@ import (
 )
 
 var (
-	GitRemoteRegexp    = regexp.MustCompile("(https|git)(@|://)github.com(:|/)([a-zA-Z0-9-_]+)/([a-zA-Z0-9-_]+)(?:\\.git)?")
+	GitRemoteRegexp    = regexp.MustCompile("(https|git)(@|://)github\\.com(:|/)([a-zA-Z0-9-_]+)/([a-zA-Z0-9-_]+)(?:\\.git)?")
 	acceptableBranches = []string{"master", "main", "staging", "dev"}
 )
 
