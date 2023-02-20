@@ -10,7 +10,7 @@ import (
 var (
 	verbose     bool
 	showVersion bool
-	version     = "1.1.2"
+	version     = "1.2.0"
 	revision    = "dev"
 )
 
