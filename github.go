@@ -40,7 +40,10 @@ func (t *tokenSource) Token() (*oauth2.Token, error) {
 func hubConfigPath() string {
 	filename := filepath.Join(os.Getenv("HOME"), ".config", "hub")
 	if _, err := os.Stat(filename); os.IsNotExist(err) {
-		panic(fmt.Sprintf("no such file or directory: %s", filename))
+		if verbose {
+			fmt.Printf("no such file or directory: %s", filename)
+		}
+		return ""
 	}
 	return filename
 }
@@ -70,12 +73,19 @@ func accessTokenFromHubConfig() string {
 func netrcPath() string {
 	filename := filepath.Join(os.Getenv("HOME"), ".netrc")
 	if _, err := os.Stat(filename); os.IsNotExist(err) {
-		panic(fmt.Sprintf("no such file or directory: %s", filename))
+		if verbose {
+			fmt.Printf("no such file or directory: %s", filename)
+		}
+		return ""
 	}
 	return filename
 }
 
 func accessTokenFromNetrc() string {
+	if netrcPath() == "" {
+		return ""
+	}
+
 	machine, err := netrc.FindMachine(netrcPath(), "api.github.com")
 	if err != nil {
 		panic(err)
