@@ -6,7 +6,7 @@ all: build test
 deps:
 	go get \
 	  github.com/bgentry/go-netrc/netrc \
-	  github.com/google/go-github/github \
+	  github.com/google/go-github/v50/github \
 	  golang.org/x/oauth2 \
 
 testdeps:

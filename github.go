@@ -11,7 +11,7 @@ import (
 	"strconv"
 
 	"github.com/bgentry/go-netrc/netrc"
-	"github.com/google/go-github/github"
+	"github.com/google/go-github/v50/github"
 	"golang.org/x/oauth2"
 	"gopkg.in/yaml.v2"
 )
@@ -112,7 +112,7 @@ func getPullRequest(owner, repo, number string) (*github.PullRequest, error) {
 	pr, res, prGetErr := client.PullRequests.Get(context.Background(), owner, repo, stringToInt(number))
 	if prGetErr != nil {
 		switch res.StatusCode {
-		case 404:
+		case http.StatusNotFound:
 			return nil, PullReqNotFoundError
 		default:
 			return nil, prGetErr
@@ -140,10 +140,11 @@ func mergePullRequest(owner, repo, number string) error {
 		if verbose {
 			fmt.Println("Received an error!", mergeErr)
 		}
+		// https://docs.github.com/en/rest/pulls/pulls?apiVersion=2022-11-28#merge-a-pull-request--status-codes
 		switch res.StatusCode {
-		case 405:
+		case http.StatusMethodNotAllowed:
 			return NotMergableError
-		case 404:
+		case http.StatusNotFound:
 			return PullReqNotFoundError
 		default:
 			return mergeErr
