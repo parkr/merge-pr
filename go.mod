@@ -1,6 +1,8 @@
 module byparker.com/go/merge-pr
 
-go 1.19
+go 1.23.0
+
+toolchain go1.24.0
 
 require (
 	github.com/bgentry/go-netrc v0.0.0-20140422174119-9fd32a8b3d3d
