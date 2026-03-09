@@ -1,12 +1,12 @@
 module byparker.com/go/merge-pr
 
-go 1.24.0
+go 1.25.0
 
 require (
 	github.com/bgentry/go-netrc v0.0.0-20140422174119-9fd32a8b3d3d
 	github.com/google/go-github/v50 v50.2.0
 	github.com/stretchr/testify v1.11.1
-	golang.org/x/oauth2 v0.35.0
+	golang.org/x/oauth2 v0.36.0
 	gopkg.in/yaml.v2 v2.4.0
 )
 
