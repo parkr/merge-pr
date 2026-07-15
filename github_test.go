@@ -3,11 +3,10 @@ package main
 import (
 	"net/http"
 	"net/http/httptest"
-	"net/url"
 	"os"
 	"testing"
 
-	"github.com/google/go-github/v50/github"
+	"github.com/google/go-github/v89/github"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -15,11 +14,13 @@ var isCI = os.Getenv("CI") == "1"
 
 func initializeTestClient(handler http.Handler) *httptest.Server {
 	server := httptest.NewServer(handler)
-	u, _ := url.Parse(server.URL)
-	u.Path = "/v3/"
+	baseURL := server.URL + "/v3/"
 
-	client = github.NewClient(newClient())
-	client.BaseURL = u
+	var err error
+	client, err = github.NewClient(github.WithHTTPClient(newClient()), github.WithURLs(&baseURL, &baseURL))
+	if err != nil {
+		panic(err)
+	}
 
 	return server
 }

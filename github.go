@@ -11,7 +11,7 @@ import (
 	"strconv"
 
 	"github.com/bgentry/go-netrc/netrc"
-	"github.com/google/go-github/v50/github"
+	"github.com/google/go-github/v89/github"
 	"golang.org/x/oauth2"
 	"gopkg.in/yaml.v2"
 )
@@ -26,7 +26,11 @@ var (
 )
 
 func initializeGitHubClient() {
-	client = github.NewClient(newClient())
+	var err error
+	client, err = github.NewClient(github.WithHTTPClient(newClient()))
+	if err != nil {
+		log.Fatalf("error initializing GitHub client: %v", err)
+	}
 }
 
 type tokenSource struct {
